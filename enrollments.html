@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academy System — My Enrollments</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="card large">
+        <div class="top-nav">
+            <h2>⏱️ My Enrollments</h2>
+            <a href="dashboard.html" class="back-btn">
+                <span>🔙</span> Back to Dashboard
+            </a>
+        </div>
+        
+        <p class="subtitle" style="text-align: left;">Track your current training progress and payment statuses.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Enrol ID</th>
+                    <th>Program Name</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>101</td>
+                    <td>Cyber Security</td>
+                    <td>2024-12-15</td>
+                    <td><span class="status-badge status-completed">Completed</span></td>
+                    <td><button class="btn btn-secondary" style="padding: 0.4rem 1rem;" onclick="handleAction(this, 'cert')">View Cert</button></td>
+                </tr>
+                <tr>
+                    <td>115</td>
+                    <td>Web Development</td>
+                    <td>2025-01-10</td>
+                    <td><span class="status-badge status-completed">Completed</span></td>
+                    <td><button class="btn btn-secondary" style="padding: 0.4rem 1rem;" onclick="handleAction(this, 'cert')">View Cert</button></td>
+                </tr>
+                <tr>
+                    <td>142</td>
+                    <td>Graphic Design</td>
+                    <td>2026-05-01</td>
+                    <td><span class="status-badge status-inprogress">In Progress</span></td>
+                    <td><button class="btn btn-secondary" style="padding: 0.4rem 1rem;" onclick="handleAction(this, 'pay')">Pay Fee</button></td>
+                </tr>
+                <tr>
+                    <td>148</td>
+                    <td>Data Analysis</td>
+                    <td>2026-05-10</td>
+                    <td><span class="status-badge status-pending">Pending</span></td>
+                    <td><button class="btn" style="padding: 0.4rem 1rem;" onclick="handleAction(this, 'pay')">Pay Fee</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+
+    <script>
+        function handleAction(btn, actionType) {
+            if (btn.disabled) return;
+            
+            if (actionType === 'pay') {
+                alert('Processing your payment...');
+                // Simulate payment delay
+                setTimeout(() => {
+                    const row = btn.closest('tr');
+                    // Change status badge
+                    const statusCell = row.querySelector('td:nth-child(4)');
+                    statusCell.innerHTML = '<span class="status-badge status-completed">Completed</span>';
+                    
+                    // Change button to View Cert
+                    const actionCell = row.querySelector('td:nth-child(5)');
+                    actionCell.innerHTML = '<button class="btn btn-secondary" style="padding: 0.4rem 1rem;" onclick="handleAction(this, \'cert\')">View Cert</button>';
+                    
+                    alert('Payment Successful!');
+                }, 500);
+            } else if (actionType === 'cert') {
+                alert('Downloading your certificate...');
+            }
+        }
+    </script>
+</body>
+</html>
