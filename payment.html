@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academy System — Payment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .payment-card {
+            background: linear-gradient(135deg, #1954a6 0%, #134285 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 20px rgba(25, 84, 166, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .payment-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        .card-chip {
+            width: 45px;
+            height: 35px;
+            background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%);
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        }
+        .card-chip::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(0,0,0,0.2);
+        }
+        .card-number-display {
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            margin-bottom: 1rem;
+            font-family: monospace;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        .card-details-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .amount-display {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 1.5rem;
+        }
+        .amount-display span {
+            color: var(--primary-color);
+        }
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--success-color);
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="top-nav">
+            <h2>💳 Secure Payment</h2>
+            <a href="enrollments.html" class="back-btn">
+                <span>🔙</span> Cancel
+            </a>
+        </div>
+        
+        <div class="amount-display">
+            SAR <span id="paymentAmount">1,500.00</span>
+        </div>
+        
+        <div class="payment-card">
+            <div class="card-chip"></div>
+            <div class="card-number-display" id="cardDisplay">•••• •••• •••• ••••</div>
+            <div class="card-details-display">
+                <div>
+                    <span style="opacity:0.7; font-size:0.7rem; display:block;">Card Holder</span>
+                    <span id="nameDisplay">YOUR NAME</span>
+                </div>
+                <div>
+                    <span style="opacity:0.7; font-size:0.7rem; display:block;">Expires</span>
+                    <span id="expiryDisplay">MM/YY</span>
+                </div>
+            </div>
+        </div>
+
+        <form id="paymentForm">
+            <div class="form-group">
+                <label for="cardNumber">Card Number:</label>
+                <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19" required oninput="updateCard()">
+            </div>
+            <div class="form-group">
+                <label for="cardName">Cardholder Name:</label>
+                <input type="text" id="cardName" placeholder="John Doe" required oninput="updateCard()">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="expiry">Expiry Date:</label>
+                    <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" required oninput="updateCard()">
+                </div>
+                <div class="form-group">
+                    <label for="cvv">CVV:</label>
+                    <input type="password" id="cvv" placeholder="•••" maxlength="3" required>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button type="submit" class="btn">Confirm Payment</button>
+            </div>
+            <div class="secure-badge">
+                🔒 <span>Your payment is securely processed.</span>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Set dynamic amount based on ID just for realism (Optional)
+        const urlParams = new URLSearchParams(window.location.search);
+        const enrollId = urlParams.get('id');
+        if (enrollId === '142') document.getElementById('paymentAmount').textContent = '2,000.00';
+        else if (enrollId === '148') document.getElementById('paymentAmount').textContent = '1,800.00';
+
+        // Auto format card number
+        document.getElementById('cardNumber').addEventListener('input', function (e) {
+            e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
+        });
+
+        // Auto format expiry date
+        document.getElementById('expiry').addEventListener('input', function (e) {
+            let val = e.target.value.replace(/[^\d]/g, '');
+            if (val.length > 2) {
+                val = val.substring(0, 2) + '/' + val.substring(2, 4);
+            }
+            e.target.value = val;
+        });
+
+        // Update visual card
+        function updateCard() {
+            const num = document.getElementById('cardNumber').value || '•••• •••• •••• ••••';
+            const name = document.getElementById('cardName').value || 'YOUR NAME';
+            const exp = document.getElementById('expiry').value || 'MM/YY';
+            
+            document.getElementById('cardDisplay').textContent = num;
+            document.getElementById('nameDisplay').textContent = name.toUpperCase();
+            document.getElementById('expiryDisplay').textContent = exp;
+        }
+
+        // Handle Payment Submit
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            
+            const btn = document.querySelector('.btn');
+            btn.textContent = 'Processing... ⌛';
+            btn.disabled = true;
+            
+            // Simulate network request
+            setTimeout(() => {
+                if (enrollId) {
+                    let paid = JSON.parse(localStorage.getItem('paidCourses') || '[]');
+                    if (!paid.includes(enrollId)) {
+                        paid.push(enrollId);
+                        localStorage.setItem('paidCourses', JSON.stringify(paid));
+                    }
+                }
+                
+                alert('Payment Successful! 🎉');
+                window.location.href = 'enrollments.html';
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

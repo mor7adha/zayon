@@ -63,24 +63,27 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const paidCourses = JSON.parse(localStorage.getItem('paidCourses') || '[]');
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const idCell = row.querySelector('td:first-child');
+                if (idCell && paidCourses.includes(idCell.textContent.trim())) {
+                    const statusCell = row.querySelector('td:nth-child(4)');
+                    statusCell.innerHTML = '<span class="status-badge status-completed">Completed</span>';
+                    const actionCell = row.querySelector('td:nth-child(5)');
+                    actionCell.innerHTML = '<button class="btn btn-secondary" style="padding: 0.4rem 1rem;" onclick="handleAction(this, \'cert\')">View Cert</button>';
+                }
+            });
+        });
+
         function handleAction(btn, actionType) {
             if (btn.disabled) return;
             
             if (actionType === 'pay') {
-                alert('Processing your payment...');
-                // Simulate payment delay
-                setTimeout(() => {
-                    const row = btn.closest('tr');
-                    // Change status badge
-                    const statusCell = row.querySelector('td:nth-child(4)');
-                    statusCell.innerHTML = '<span class="status-badge status-completed">Completed</span>';
-                    
-                    // Change button to View Cert
-                    const actionCell = row.querySelector('td:nth-child(5)');
-                    actionCell.innerHTML = '<button class="btn btn-secondary" style="padding: 0.4rem 1rem;" onclick="handleAction(this, \'cert\')">View Cert</button>';
-                    
-                    alert('Payment Successful!');
-                }, 500);
+                const row = btn.closest('tr');
+                const id = row.querySelector('td:first-child').textContent.trim();
+                window.location.href = `payment.html?id=${id}`;
             } else if (actionType === 'cert') {
                 alert('Downloading your certificate...');
             }
