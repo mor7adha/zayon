@@ -85,7 +85,9 @@
                 const id = row.querySelector('td:first-child').textContent.trim();
                 window.location.href = `payment.html?id=${id}`;
             } else if (actionType === 'cert') {
-                alert('Downloading your certificate...');
+                const row = btn.closest('tr');
+                const courseName = row.querySelector('td:nth-child(2)').textContent.trim();
+                window.location.href = `certificate.html?course=${encodeURIComponent(courseName)}`;
             }
         }
     </script>
