@@ -70,5 +70,36 @@
             </tbody>
         </table>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode');
+            
+            if (mode === 'view') {
+                // Change title and subtitle
+                document.querySelector('h2').innerHTML = '📋 Available Training Programs';
+                document.querySelector('.subtitle').textContent = 'Browse the list of available training programs. To enroll, go back and select "Enroll in a Program".';
+                
+                // Hide action column header
+                const ths = document.querySelectorAll('th');
+                if (ths.length > 0) {
+                    ths[ths.length - 1].style.display = 'none';
+                }
+                
+                // Hide action column cells
+                const trs = document.querySelectorAll('tbody tr');
+                trs.forEach(tr => {
+                    const tds = tr.querySelectorAll('td');
+                    if (tds.length > 0) {
+                        tds[tds.length - 1].style.display = 'none';
+                    }
+                });
+            } else if (mode === 'enroll') {
+                document.querySelector('h2').innerHTML = '✏️ Program Enrollment';
+                document.querySelector('.subtitle').textContent = 'Select a program below and click Enroll to register.';
+            }
+        });
+    </script>
 </body>
 </html>
