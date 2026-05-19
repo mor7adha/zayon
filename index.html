@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academy System — Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="card">
@@ -32,31 +32,20 @@
         </form>
     </div>
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault(); 
             
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    window.location.href = '/dashboard.html';
-                } else {
-                    alert(data.message || 'Invalid email or password!');
-                }
-            } catch (error) {
-                console.error('Error logging in:', error);
-                alert('Connection error. Please try again.');
+            const users = JSON.parse(localStorage.getItem('academy_users') || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                localStorage.setItem('current_user', JSON.stringify(user));
+                window.location.href = 'dashboard.html';
+            } else {
+                alert('Invalid email or password! Please try again or create a new account.');
             }
         });
     </script>

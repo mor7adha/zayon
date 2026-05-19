@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academy System — Training Programs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="card large">
+        <div class="top-nav">
+            <h2>📋 Training Programs</h2>
+            <a href="dashboard.html" class="back-btn">
+                <span>🔙</span> Back to Dashboard
+            </a>
+        </div>
+        
+        <p class="subtitle" style="text-align: left;">Browse and enroll in available training programs.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Program Name</th>
+                    <th>Type</th>
+                    <th>Duration</th>
+                    <th>Fees (SAR)</th>
+                    <th>Start Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="programsTableBody">
+                <!-- Data will be loaded here dynamically -->
+                <tr><td colspan="7">Loading programs...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Static programs list
+        const ALL_PROGRAMS = [
+            { id: 101, name: 'Cyber Security', type: 'Technology', duration: '30 Days', fee: 1500.00, start_date: '2025-01-01' },
+            { id: 115, name: 'Web Development', type: 'Programming', duration: '45 Days', fee: 2000.00, start_date: '2025-02-01' },
+            { id: 142, name: 'Graphic Design', type: 'Design', duration: '40 Days', fee: 1800.00, start_date: '2026-05-01' },
+            { id: 148, name: 'Data Analysis', type: 'Data Science', duration: '50 Days', fee: 3000.00, start_date: '2026-07-01' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode');
+            
+            const tbody = document.getElementById('programsTableBody');
+            tbody.innerHTML = '';
+            
+            ALL_PROGRAMS.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${p.id}</td>
+                    <td>${p.name}</td>
+                    <td>${p.type}</td>
+                    <td>${p.duration}</td>
+                    <td>${p.fee.toFixed(2)}</td>
+                    <td>${p.start_date}</td>
+                    <td class="action-cell">
+                        <button class="btn btn-secondary" style="padding: 0.4rem 1rem;" onclick="handleEnroll(${p.id})">Enroll</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            if (mode === 'view') {
+                document.querySelector('h2').innerHTML = '📋 Available Training Programs';
+                document.querySelector('.subtitle').textContent = 'Browse the list of available training programs. To enroll, go back and select "Enroll in a Program".';
+                
+                // Hide action column after data is loaded
+                setTimeout(() => {
+                    const ths = document.querySelectorAll('th');
+                    if (ths.length > 0) ths[ths.length - 1].style.display = 'none';
+                    document.querySelectorAll('.action-cell').forEach(td => td.style.display = 'none');
+                }, 100);
+            } else if (mode === 'enroll') {
+                document.querySelector('h2').innerHTML = '✏️ Program Enrollment';
+                document.querySelector('.subtitle').textContent = 'Select a program below and click Enroll to register.';
+            }
+        });
+        
+        function handleEnroll(programId) {
+            const currentUser = JSON.parse(localStorage.getItem('current_user'));
+            if (!currentUser) {
+                alert('Please login first!');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            const userEmail = currentUser.email;
+            const enrollmentsKey = 'enrollments_' + userEmail;
+            const enrollments = JSON.parse(localStorage.getItem(enrollmentsKey) || '[]');
+            
+            // Check if already enrolled
+            if (enrollments.find(e => e.program_id === programId)) {
+                alert('You are already enrolled in this program!');
+                return;
+            }
+            
+            // Find program details
+            const program = ALL_PROGRAMS.find(p => p.id === programId);
+            
+            // Add new enrollment
+            enrollments.push({
+                enrollment_id: Date.now(), // Generate fake ID
+                program_id: program.id,
+                name: program.name,
+                enrollment_date: new Date().toISOString().split('T')[0],
+                status: 'Pending'
+            });
+            
+            localStorage.setItem(enrollmentsKey, JSON.stringify(enrollments));
+            
+            alert('Successfully enrolled! Go to "My Enrollments" to view your status and pay fees.');
+        }
+    </script>
+</body>
+</html>

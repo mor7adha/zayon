@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academy System — Sign Up</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="card">
@@ -68,39 +68,25 @@
         </form>
     </div>
     <script>
-        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const userData = {
-                firstName: document.getElementById('firstName').value,
-                lastName: document.getElementById('lastName').value,
-                nationalId: document.getElementById('nationalId').value,
-                phone: document.getElementById('phone').value,
-                email: document.getElementById('email').value,
-                gender: document.getElementById('gender').value,
-                city: document.getElementById('city').value,
-                password: document.getElementById('password').value
-            };
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const name = document.getElementById('firstName').value + ' ' + document.getElementById('lastName').value;
             
-            try {
-                const response = await fetch('/api/signup', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(userData)
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    alert('Account created successfully! You can now login.');
-                    window.location.href = '/index.html';
-                } else {
-                    alert(data.message || 'Error creating account.');
-                }
-            } catch (error) {
-                console.error('Error signing up:', error);
-                alert('Connection error. Please try again.');
+            const users = JSON.parse(localStorage.getItem('academy_users') || '[]');
+            
+            if (users.find(u => u.email === email)) {
+                alert('This email is already registered! Please go to login.');
+                return;
             }
+            
+            users.push({ email, password, name });
+            localStorage.setItem('academy_users', JSON.stringify(users));
+            
+            alert('Account created successfully! You can now login.');
+            window.location.href = 'index.html';
         });
     </script>
 </body>
