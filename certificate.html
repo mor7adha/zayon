@@ -380,8 +380,8 @@
             
             <div class="cert-footer">
                 <div class="signature-block">
-                    <div class="signature-img">Waleed Shaher</div>
-                    <div class="signature-title">Academy Director</div>
+                    <div class="signature-img" id="doctorName">Waleed Shaher</div>
+                    <div class="signature-title">Course Instructor</div>
                 </div>
                 
                 <div class="signature-block">
@@ -406,11 +406,29 @@
     <script>
         // Fetch course from URL
         const urlParams = new URLSearchParams(window.location.search);
-        const course = urlParams.get('course');
-        
-        if (course) {
-            document.getElementById('courseName').textContent = course;
+        const course = urlParams.get('course') || 'Advanced Training Program';
+        document.getElementById('courseName').textContent = course;
+
+        // Set Student Name from localStorage
+        const currentUser = JSON.parse(localStorage.getItem('current_user'));
+        if (currentUser && currentUser.name) {
+            document.getElementById('studentName').textContent = currentUser.name;
         }
+
+        // Generate deterministic random doctor based on course name
+        const doctorNames = [
+            "Dr. Waleed Shaher", "Dr. Ahmed Khalid", "Dr. Sarah Al-Otaibi", 
+            "Dr. Mohammed Noor", "Dr. Fatima Al-Zahra", "Dr. Yasser Hassan",
+            "Dr. Reem Abdullah", "Dr. Tariq Mansour"
+        ];
+        
+        // Simple hash so the same course always gets the same doctor
+        let hash = 0;
+        for (let i = 0; i < course.length; i++) {
+            hash = course.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const doctorIndex = Math.abs(hash) % doctorNames.length;
+        document.getElementById('doctorName').textContent = doctorNames[doctorIndex];
 
         // Set date
         const today = new Date();
