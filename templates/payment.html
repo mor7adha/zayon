@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Checkout — Academy System</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/static/styles.css">
     <style>
         .checkout-container {
             display: flex;
@@ -386,35 +386,39 @@
         }
 
         // Handle Payment Submit
-        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+        document.getElementById('paymentForm').addEventListener('submit', async function(e) {
             e.preventDefault(); 
             
             // Show processing overlay
             document.getElementById('processingOverlay').classList.add('active');
             
-            // Simulate network processing delay
-            setTimeout(() => {
+            try {
                 if (enrollId) {
-                    let paid = JSON.parse(localStorage.getItem('paidCourses') || '[]');
-                    if (!paid.includes(enrollId)) {
-                        paid.push(enrollId);
-                        localStorage.setItem('paidCourses', JSON.stringify(paid));
-                    }
+                    await fetch('/api/pay', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ enrollment_id: enrollId })
+                    });
                 }
                 
-                // Change overlay content to success
-                const overlay = document.getElementById('processingOverlay');
-                overlay.innerHTML = `
-                    <div style="font-size: 5rem; line-height: 1; margin-bottom: 1rem;">✅</div>
-                    <h3 style="color: var(--success-color);">Payment Successful!</h3>
-                    <p class="subtitle" style="margin-top: 0.5rem;">Redirecting to your enrollments...</p>
-                `;
-                
+                // Simulate network processing delay for realism
                 setTimeout(() => {
-                    window.location.href = 'enrollments.html';
-                }, 2000);
-
-            }, 2500);
+                    // Change overlay content to success
+                    const overlay = document.getElementById('processingOverlay');
+                    overlay.innerHTML = `
+                        <div style="font-size: 5rem; line-height: 1; margin-bottom: 1rem;">✅</div>
+                        <h3 style="color: var(--success-color);">Payment Successful!</h3>
+                        <p class="subtitle" style="margin-top: 0.5rem;">Redirecting to your enrollments...</p>
+                    `;
+                    
+                    setTimeout(() => {
+                        window.location.href = '/enrollments.html';
+                    }, 2000);
+                }, 1500);
+            } catch (err) {
+                alert('Connection error during payment processing.');
+                document.getElementById('processingOverlay').classList.remove('active');
+            }
         });
     </script>
 </body>
