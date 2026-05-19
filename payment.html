@@ -3,72 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academy System — Payment</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Secure Checkout — Academy System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
+        .checkout-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        @media (min-width: 768px) {
+            .checkout-container {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+            .checkout-form-section {
+                flex: 1.5;
+            }
+            .checkout-summary-section {
+                flex: 1;
+                background: #f8fafc;
+                padding: 1.5rem;
+                border-radius: 12px;
+                border: 1px solid var(--border-color);
+            }
+        }
+
+        /* Realistic Card Design */
         .payment-card {
-            background: linear-gradient(135deg, #1954a6 0%, #134285 100%);
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             color: white;
             padding: 1.5rem;
-            border-radius: 12px;
+            border-radius: 16px;
             margin-bottom: 2rem;
-            box-shadow: 0 10px 20px rgba(25, 84, 166, 0.2);
+            box-shadow: 0 15px 35px rgba(15, 23, 42, 0.3), inset 0 1px 0 rgba(255,255,255,0.1);
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .payment-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -50%;
+            width: 100%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            animation: shine 6s infinite;
+        }
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
         }
         .payment-card::after {
             content: '';
             position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.1);
+            bottom: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+        }
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
         }
         .card-chip {
             width: 45px;
-            height: 35px;
-            background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%);
+            height: 32px;
+            background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
             border-radius: 6px;
-            margin-bottom: 1.5rem;
             position: relative;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.3);
+            overflow: hidden;
         }
-        .card-chip::after {
+        .card-chip::before, .card-chip::after {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.15);
+        }
+        .card-chip::before { width: 100%; height: 1px; top: 50%; left: 0; }
+        .card-chip::after { width: 1px; height: 100%; top: 0; left: 50%; }
+        
+        .card-logo {
+            font-style: italic;
+            font-weight: 700;
+            font-size: 1.2rem;
+            opacity: 0.8;
+            letter-spacing: 1px;
         }
         .card-number-display {
-            font-size: 1.5rem;
-            letter-spacing: 3px;
-            margin-bottom: 1rem;
-            font-family: monospace;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-family: 'Space Mono', monospace;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            min-height: 33px;
         }
         .card-details-display {
             display: flex;
             justify-content: space-between;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+            font-family: 'Space Mono', monospace;
         }
-        .amount-display {
-            text-align: center;
-            font-size: 2.2rem;
+        .card-details-display > div {
+            display: flex;
+            flex-direction: column;
+        }
+        .card-label {
+            font-family: 'Inter', sans-serif;
+            opacity: 0.6;
+            font-size: 0.65rem;
+            margin-bottom: 0.2rem;
+            text-transform: capitalize;
+            letter-spacing: normal;
+        }
+
+        /* Order Summary */
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px dashed var(--border-color);
             font-weight: 700;
+            font-size: 1.2rem;
             color: var(--text-main);
-            margin-bottom: 1.5rem;
         }
-        .amount-display span {
-            color: var(--primary-color);
+        .supported-methods {
+            display: flex;
+            gap: 10px;
+            margin-top: 2rem;
+            justify-content: center;
         }
+        .method-icon {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-main);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        /* Processing Overlay */
+        .processing-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        .processing-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
         .secure-badge {
             display: flex;
             align-items: center;
@@ -78,75 +197,172 @@
             color: var(--success-color);
             margin-top: 1rem;
         }
+        
+        .input-icon-wrapper {
+            position: relative;
+        }
+        .input-icon-wrapper input {
+            padding-right: 40px;
+        }
+        .input-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            color: var(--success-color);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        input:valid + .input-icon {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
-    <div class="card">
+    <div class="card large" style="max-width: 900px;">
         <div class="top-nav">
-            <h2>💳 Secure Payment</h2>
+            <h2>🔒 Secure Checkout</h2>
             <a href="enrollments.html" class="back-btn">
-                <span>🔙</span> Cancel
+                <span>🔙</span> Cancel & Return
             </a>
         </div>
         
-        <div class="amount-display">
-            SAR <span id="paymentAmount">1,500.00</span>
-        </div>
-        
-        <div class="payment-card">
-            <div class="card-chip"></div>
-            <div class="card-number-display" id="cardDisplay">•••• •••• •••• ••••</div>
-            <div class="card-details-display">
-                <div>
-                    <span style="opacity:0.7; font-size:0.7rem; display:block;">Card Holder</span>
-                    <span id="nameDisplay">YOUR NAME</span>
+        <div class="checkout-container">
+            <!-- Form Section -->
+            <div class="checkout-form-section">
+                <div class="payment-card">
+                    <div class="card-top">
+                        <div class="card-chip"></div>
+                        <div class="card-logo" id="cardTypeLogo">VISA</div>
+                    </div>
+                    <div class="card-number-display" id="cardDisplay">•••• •••• •••• ••••</div>
+                    <div class="card-details-display">
+                        <div>
+                            <span class="card-label">Card Holder</span>
+                            <span id="nameDisplay">YOUR NAME</span>
+                        </div>
+                        <div>
+                            <span class="card-label">Expires</span>
+                            <span id="expiryDisplay">MM/YY</span>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <span style="opacity:0.7; font-size:0.7rem; display:block;">Expires</span>
-                    <span id="expiryDisplay">MM/YY</span>
-                </div>
-            </div>
-        </div>
 
-        <form id="paymentForm">
-            <div class="form-group">
-                <label for="cardNumber">Card Number:</label>
-                <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19" required oninput="updateCard()">
+                <form id="paymentForm">
+                    <div class="form-group">
+                        <label for="cardNumber">Card Number</label>
+                        <div class="input-icon-wrapper">
+                            <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19" required oninput="updateCard()" pattern=".{19}">
+                            <span class="input-icon">✓</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cardName">Cardholder Name</label>
+                        <div class="input-icon-wrapper">
+                            <input type="text" id="cardName" placeholder="John Doe" required oninput="updateCard()" minlength="3">
+                            <span class="input-icon">✓</span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiry">Expiry Date</label>
+                            <div class="input-icon-wrapper">
+                                <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" required oninput="updateCard()" pattern="(0[1-9]|1[0-2])\/[0-9]{2}">
+                                <span class="input-icon">✓</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cvv">Security Code (CVV)</label>
+                            <div class="input-icon-wrapper">
+                                <input type="password" id="cvv" placeholder="•••" maxlength="3" required pattern="[0-9]{3}">
+                                <span class="input-icon">✓</span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label for="cardName">Cardholder Name:</label>
-                <input type="text" id="cardName" placeholder="John Doe" required oninput="updateCard()">
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="expiry">Expiry Date:</label>
-                    <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" required oninput="updateCard()">
+
+            <!-- Summary Section -->
+            <div class="checkout-summary-section">
+                <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem; color: var(--text-main);">Order Summary</h3>
+                
+                <div class="summary-row">
+                    <span>Program Fee</span>
+                    <span>SAR <span id="subTotal">0.00</span></span>
                 </div>
-                <div class="form-group">
-                    <label for="cvv">CVV:</label>
-                    <input type="password" id="cvv" placeholder="•••" maxlength="3" required>
+                <div class="summary-row">
+                    <span>VAT (15%)</span>
+                    <span>SAR <span id="vatAmount">0.00</span></span>
+                </div>
+                
+                <div class="summary-total">
+                    <span>Total to Pay</span>
+                    <span>SAR <span id="totalAmount">0.00</span></span>
+                </div>
+
+                <button type="submit" form="paymentForm" class="btn" style="margin-top: 1.5rem; font-size: 1.1rem; padding: 1rem;">
+                    Pay SAR <span id="btnTotal">0.00</span>
+                </button>
+                
+                <div class="secure-badge">
+                    🔒 <span>Payments are secure and encrypted.</span>
+                </div>
+
+                <div class="supported-methods">
+                    <span class="method-icon" style="color: #1a1f71;">VISA</span>
+                    <span class="method-icon" style="color: #eb001b;">Mastercard</span>
+                    <span class="method-icon" style="color: #00b980;">mada</span>
                 </div>
             </div>
-            
-            <div class="button-group">
-                <button type="submit" class="btn">Confirm Payment</button>
-            </div>
-            <div class="secure-badge">
-                🔒 <span>Your payment is securely processed.</span>
-            </div>
-        </form>
+        </div>
+    </div>
+
+    <!-- Processing Overlay -->
+    <div class="processing-overlay" id="processingOverlay">
+        <div class="spinner"></div>
+        <h3 style="color: var(--primary-color);">Processing Payment...</h3>
+        <p class="subtitle" style="margin-top: 0.5rem;">Please do not close or refresh this page.</p>
     </div>
 
     <script>
-        // Set dynamic amount based on ID just for realism (Optional)
+        // Set dynamic amounts based on ID
         const urlParams = new URLSearchParams(window.location.search);
         const enrollId = urlParams.get('id');
-        if (enrollId === '142') document.getElementById('paymentAmount').textContent = '2,000.00';
-        else if (enrollId === '148') document.getElementById('paymentAmount').textContent = '1,800.00';
+        
+        let subtotal = 1500;
+        if (enrollId === '142') subtotal = 2000;
+        else if (enrollId === '148') subtotal = 1800;
+
+        const vat = subtotal * 0.15;
+        const total = subtotal + vat;
+
+        document.getElementById('subTotal').textContent = subtotal.toFixed(2);
+        document.getElementById('vatAmount').textContent = vat.toFixed(2);
+        document.getElementById('totalAmount').textContent = total.toFixed(2);
+        document.getElementById('btnTotal').textContent = total.toFixed(2);
 
         // Auto format card number
         document.getElementById('cardNumber').addEventListener('input', function (e) {
-            e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
+            let val = e.target.value.replace(/[^\d]/g, '');
+            
+            // Detect card type
+            const logo = document.getElementById('cardTypeLogo');
+            if (val.startsWith('4')) {
+                logo.textContent = 'VISA';
+                logo.style.color = 'white';
+            } else if (val.startsWith('5')) {
+                logo.textContent = 'Mastercard';
+                logo.style.color = '#ff9f00';
+            } else if (val.startsWith('6')) {
+                logo.textContent = 'mada';
+                logo.style.color = '#00b980';
+            } else {
+                logo.textContent = 'CARD';
+                logo.style.color = 'white';
+            }
+
+            e.target.value = val.replace(/(.{4})/g, '$1 ').trim();
         });
 
         // Auto format expiry date
@@ -173,11 +389,10 @@
         document.getElementById('paymentForm').addEventListener('submit', function(e) {
             e.preventDefault(); 
             
-            const btn = document.querySelector('.btn');
-            btn.textContent = 'Processing... ⌛';
-            btn.disabled = true;
+            // Show processing overlay
+            document.getElementById('processingOverlay').classList.add('active');
             
-            // Simulate network request
+            // Simulate network processing delay
             setTimeout(() => {
                 if (enrollId) {
                     let paid = JSON.parse(localStorage.getItem('paidCourses') || '[]');
@@ -187,9 +402,19 @@
                     }
                 }
                 
-                alert('Payment Successful! 🎉');
-                window.location.href = 'enrollments.html';
-            }, 1500);
+                // Change overlay content to success
+                const overlay = document.getElementById('processingOverlay');
+                overlay.innerHTML = `
+                    <div style="font-size: 5rem; line-height: 1; margin-bottom: 1rem;">✅</div>
+                    <h3 style="color: var(--success-color);">Payment Successful!</h3>
+                    <p class="subtitle" style="margin-top: 0.5rem;">Redirecting to your enrollments...</p>
+                `;
+                
+                setTimeout(() => {
+                    window.location.href = 'enrollments.html';
+                }, 2000);
+
+            }, 2500);
         });
     </script>
 </body>
