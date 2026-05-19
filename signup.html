@@ -69,7 +69,26 @@
     </div>
     <script>
         document.getElementById('signupForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevent adding ?params to local file path
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const name = document.getElementById('firstName').value + ' ' + document.getElementById('lastName').value;
+            
+            // Get existing users or create empty array
+            const users = JSON.parse(localStorage.getItem('academy_users') || '[]');
+            
+            // Check if email already exists
+            if (users.find(u => u.email === email)) {
+                alert('This email is already registered! Please go to login.');
+                return;
+            }
+            
+            // Save new user
+            users.push({ email, password, name });
+            localStorage.setItem('academy_users', JSON.stringify(users));
+            
+            alert('Account created successfully! You can now login.');
             window.location.href = 'index.html';
         });
     </script>

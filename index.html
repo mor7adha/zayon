@@ -33,8 +33,25 @@
     </div>
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevent adding ?params to local file path
-            window.location.href = 'dashboard.html';
+            e.preventDefault(); 
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Get users from localStorage
+            const users = JSON.parse(localStorage.getItem('academy_users') || '[]');
+            
+            // Find user with matching email and password
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                // Login successful
+                localStorage.setItem('current_user', JSON.stringify(user));
+                window.location.href = 'dashboard.html';
+            } else {
+                // Login failed
+                alert('Invalid email or password! Please try again or create a new account.');
+            }
         });
     </script>
 </body>
